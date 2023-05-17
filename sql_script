@@ -1,0 +1,75 @@
+CREATE TABLE `diagnostic_list` (
+  `l_id` int UNIQUE PRIMARY KEY NOT NULL,
+  `l_m_id` int UNIQUE NOT NULL,
+  `l_d_id` int NOT NULL,
+  `l_card_id` int NOT NULL,
+  `recipes_recomend` varchar(255)
+);
+
+CREATE TABLE `medical_card` (
+  `card_id` int UNIQUE PRIMARY KEY NOT NULL,
+  `status` varchar(255),
+  `last_meeting_date` datetime
+);
+
+CREATE TABLE `pacient` (
+  `p_id` int UNIQUE PRIMARY KEY NOT NULL,
+  `p_card_id` int UNIQUE NOT NULL,
+  `surname` varchar(255),
+  `name` varchar(255),
+  `secondname` varchar(255),
+  `gender` enum ('M','F'),
+  `identificator` varchar(255) UNIQUE,
+  `date_of_Birth` date,
+  `preferential_status` varchar(255),
+  `place_of_w_or_s` varchar(255),
+  `residential_adress` varchar(255)
+);
+
+CREATE TABLE `meeting` (
+  `m_id` int UNIQUE PRIMARY KEY NOT NULL,
+  `m_reg_code` int,
+  `m_d_id` int,
+  `date_time` datetime
+);
+
+CREATE TABLE `meeting_registration` (
+  `reg_code` int UNIQUE PRIMARY KEY NOT NULL,
+  `reg_p_id` int,
+  `reg_ms_id` int,
+  `date_time` datetime
+);
+
+CREATE TABLE `medical_specialization` (
+  `ms_id` int UNIQUE PRIMARY KEY NOT NULL,
+  `ms_name` varchar(255) NOT NULL
+);
+
+CREATE TABLE `doctor` (
+  `d_id` int UNIQUE PRIMARY KEY NOT NULL,
+  `d_ms_id` int,
+  `surname` varchar(255),
+  `name` varchar(255),
+  `secondname` varchar(255),
+  `gender` enum ('M','F'),
+  `room` varchar(255),
+  `contact_phone` int
+);
+
+ALTER TABLE `diagnostic_list` ADD FOREIGN KEY (`l_m_id`) REFERENCES `meeting` (`m_id`);
+
+ALTER TABLE `diagnostic_list` ADD FOREIGN KEY (`l_d_id`) REFERENCES `doctor` (`d_id`);
+
+ALTER TABLE `diagnostic_list` ADD FOREIGN KEY (`l_card_id`) REFERENCES `medical_card` (`card_id`);
+
+ALTER TABLE `medical_card` ADD FOREIGN KEY (`card_id`) REFERENCES `pacient` (`p_card_id`);
+
+ALTER TABLE `meeting` ADD FOREIGN KEY (`m_reg_code`) REFERENCES `meeting_registration` (`reg_code`);
+
+ALTER TABLE `meeting` ADD FOREIGN KEY (`m_d_id`) REFERENCES `doctor` (`d_id`);
+
+ALTER TABLE `meeting_registration` ADD FOREIGN KEY (`reg_p_id`) REFERENCES `pacient` (`p_id`);
+
+ALTER TABLE `meeting_registration` ADD FOREIGN KEY (`reg_ms_id`) REFERENCES `medical_specialization` (`ms_id`);
+
+ALTER TABLE `doctor` ADD FOREIGN KEY (`d_ms_id`) REFERENCES `medical_specialization` (`ms_id`);
